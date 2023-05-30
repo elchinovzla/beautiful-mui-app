@@ -1,15 +1,114 @@
-import { Autocomplete, Button, FormControl, FormControlLabel, FormGroup, FormLabel, ListItemText, MenuItem, Paper, Radio, RadioGroup, Select, Stack, TextField } from "@mui/material";
-import React from "react"
-import { DesktopDatePicker } from "@mui/x-date-pickers";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import { Alert, AlertTitle, Button, Dialog, FormControl, FormGroup, Paper, SelectChangeEvent, Stack } from "@mui/material";
+import React, { useState } from "react"
+import { contactData, FormValues } from "../../Data/ContactData";
+import dayjs from "dayjs";
+import BeautifulTextField from "./BeautifulTextField";
+import RolesAutoComplete from "./RolesAutoComplete";
+import SkillSelect from "./SkillSelect";
+import BeautifulDesktopDatePicker from "./BeautifulDesktopDatePicker";
+import PreferenceRadios from "./PreferenceRadios";
 
-const ROLES = ['React', 'Angular', 'Java', 'Redux', 'SQL','Manual testing', 'Selenium'];
-const SKILLS = ['Dev', 'QA', 'PM', 'Designer', 'DM'];
-const minWidth = 300;
+export const MIN_WIDTH = 300;
+export const DATE_FORMAT = 'MM/DD/YYYY';
+export const DEFAULT_PREFERENCE = "WFH";
+const today = new Date();
 
 export default function ContactForm() {
+    const getDefaultFormValues = () => {
+        const formattedToday = new Intl.DateTimeFormat(
+            'en-US', 
+            {
+                month: '2-digit', 
+                day:'2-digit', 
+                year:'numeric'}
+        ).format(today);
+
+        return {
+            id: contactData.length + 1, 
+            name: "", 
+            skills:['React'], 
+            startDate: formattedToday, 
+            preference: DEFAULT_PREFERENCE
+        }
+    }
+
+    const [formValues, setFormValues] = useState<FormValues>(
+        getDefaultFormValues()
+    );
+    const [alertOpen, setAlertOpen] = useState(false);
+
+    const handleTextFieldChange = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const { name, value } = event.target;
+        setFormValues({
+            ...formValues,
+            [name]: value
+        })
+    }
+
+    const handleAutoCompleteChange = (
+        event: React.SyntheticEvent<Element, Event>, 
+        value: string
+    ) => {
+        setFormValues({
+            ...formValues,
+            role: value || ''
+        }
+        )
+    } 
+
+    const handleSelectChange = (
+        event: SelectChangeEvent<string[]>,
+        child: React.ReactNode
+    ) => {
+        const { target: {value}} = event;
+        setFormValues({
+            ...formValues,
+            skills: typeof value === "string" ? value.split(", ") : value
+        })
+    }
+
+    const handleDatePickerChange = (
+        value: dayjs.Dayjs | null
+    ) => {
+        setFormValues({
+            ...formValues,
+            startDate: value?.format(DATE_FORMAT)
+        })
+    }
+
+    const handleRadioChange = (
+        event: React.ChangeEvent<HTMLInputElement>, 
+        value: string
+    ) => {
+        const { name } = event.target;
+        setFormValues({
+            ...formValues,
+            [name]: value
+        })
+    }
+
+    const handleSubmitClick = () => {
+        contactData.push(formValues);
+        setAlertOpen(true);
+        clearValues();
+    }
+
+    const handleClearClick = () => {
+        clearValues();
+    }
+
+    const clearValues = () => {
+        setFormValues({...getDefaultFormValues()});
+    }
+
+    const handleAlertClick = () => {
+        setAlertOpen(false);
+    }
+
     return (
+        <>
         <Paper>
             <form>
                 <FormControl>
@@ -20,29 +119,13 @@ export default function ContactForm() {
                         justifyContent:'space-between'
                     }}
                     >
-                        <TextField 
-                        id='contact-form-name'
-                        name='name'
-                        label='Name'
-                        variant="outlined"
-                        sx={{minWidth: minWidth, marginRight: 2}}
+                        <BeautifulTextField
+                        value={formValues.name}
+                        onChange={handleTextFieldChange}
                         />
-                        <Autocomplete
-                        options={ROLES}
-                        renderInput={(params)=> {
-                            return (
-                                <TextField name="role" {...params}/>
-                            )
-                        }}
-                        getOptionLabel={(roleOption)=>`${roleOption}`}
-                        renderOption={(props, option) => {
-                            return (
-                                <li {...props}>
-                                    {`${option}`}
-                                </li>
-                            )
-                        }}
-                        sx={{minWidth: minWidth}}
+                        <RolesAutoComplete
+                        value={formValues.role ?? ''}
+                        onInputChange={handleAutoCompleteChange}
                         />
                     </FormGroup>
                     <FormGroup 
@@ -52,26 +135,14 @@ export default function ContactForm() {
                         justifyContent:'space-between'
                     }}
                     >
-                        <Select 
-                        id="skill-select" 
-                        renderValue={(select: string[]) => select.join(", ")}
-                        sx={{minWidth: minWidth, marginRight: 2}}
-                        >
-                            {SKILLS.map((skill)=> 
-                            <MenuItem value={skill} key={skill}>
-                                <ListItemText primary={skill}/>
-                            </MenuItem>
-                            )}
-                        </Select>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DesktopDatePicker 
-                                    label='Date'
-                                    format='MM/DD/YYYY'
-                                    value='abc'
-                                    onChange={()=>{}}
-                                    sx={{minWidth:minWidth}}
-                                />
-                            </LocalizationProvider>
+                        <SkillSelect
+                        value={formValues.skills || ''}
+                        onChange={handleSelectChange}
+                        />
+                        <BeautifulDesktopDatePicker
+                        value={dayjs(formValues.startDate)}
+                        onChange={handleDatePickerChange}
+                        />
                     </FormGroup>
                     <FormGroup
                     row
@@ -80,39 +151,26 @@ export default function ContactForm() {
                         justifyContent:'space-between'
                     }}
                     >
-                        <FormGroup sx={{minWidth: minWidth, marginRight: 2}}>
-                            <FormLabel component="legend">
-                                Work Preference
-                            </FormLabel>
-                            <RadioGroup 
-                            id="preference-type-radio"
-                            name="preference"
-                            value="WFH"
-                            >
-                                <FormControlLabel 
-                                control={<Radio/>} 
-                                label="Work From Home"
-                                value="WFH"
-                                />
-                                <FormControlLabel 
-                                control={<Radio/>} 
-                                label="Hybrid"
-                                value="Hybrid"
-                                />
-                                <FormControlLabel 
-                                control={<Radio/>} 
-                                label="Return To Office"
-                                value="RTO"
-                                />
-                            </RadioGroup>
-                        </FormGroup>
+                        <PreferenceRadios
+                            preference={formValues.preference}
+                            handleRadioChange={handleRadioChange}
+                        />
                         <Stack>
-                            <Button>Submit</Button>
-                            <Button>Clear</Button>
+                            <Button onClick={handleSubmitClick}>Submit</Button>
+                            <Button onClick={handleClearClick}>Clear</Button>
                         </Stack>
                     </FormGroup>
                 </FormControl>
             </form>
         </Paper>
+        <Dialog open={alertOpen} onClose={handleAlertClick}>
+            <Alert>
+                <AlertTitle>
+                    Success!
+                </AlertTitle>
+                Form submitted
+            </Alert>
+        </Dialog>
+        </>
     )
 }
