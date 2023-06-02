@@ -28,7 +28,9 @@ const simpleStyles = {
     },
     content: {
         marginLeft: drawerWidth + 20,
-        marginTop: 20
+        marginTop: 20,
+        padding: 3,
+        maxWidth: 720
     }
 }
 

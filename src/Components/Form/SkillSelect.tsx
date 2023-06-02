@@ -18,6 +18,7 @@ const SkillSelect = (
         id="skill-select" 
         renderValue={(select: string[]) => select.join(", ")}
         sx={{minWidth: MIN_WIDTH, marginRight: 2}}
+        multiple
         >
             {SKILLS.map((skill)=> 
             <MenuItem value={skill} key={skill}>
