@@ -154,7 +154,8 @@ export default function ContactForm() {
           ...paperInputStyle,
           margin: { xs: 1, sm: 2 },
           zIndex: theme.zIndex.appBar + 1,
-          "&:hover": { backgroundColor: "rgba(0,0,0,0.1" },
+          "&:hover": { backgroundColor: "rgba(0,0,0,0.1)" },
+          backgroundColor: "grid.dark",
         }}
       >
         <form>
@@ -194,8 +195,20 @@ export default function ContactForm() {
                 handleRadioChange={handleRadioChange}
               />
               <Stack>
-                <Button onClick={handleSubmitClick}>Submit</Button>
-                <Button onClick={handleClearClick}>Clear</Button>
+                <Button
+                  variant="contained"
+                  sx={{ height: 56, width: 100 }}
+                  onClick={handleSubmitClick}
+                >
+                  Submit
+                </Button>
+                <Button
+                  variant="beautiful"
+                  sx={{ height: 56, width: 100 }}
+                  onClick={handleClearClick}
+                >
+                  Clear
+                </Button>
               </Stack>
             </StyledFormGroup>
           </FormControl>
