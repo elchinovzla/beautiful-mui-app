@@ -5,7 +5,6 @@ import {
   Checkbox,
   Dialog,
   FormControl,
-  FormGroup,
   ListItemText,
   MenuItem,
   Paper,
@@ -21,6 +20,7 @@ import BeautifulTextField from "./BeautifulTextField";
 import PreferenceRadios from "./PreferenceRadios";
 import RolesAutoComplete from "./RolesAutoComplete";
 import SkillSelect from "./SkillSelect";
+import { StyledFormGroup } from "./StyledFormGroup";
 
 export const MIN_WIDTH = 300;
 export const DATE_FORMAT = "MM/DD/YYYY";
@@ -159,13 +159,7 @@ export default function ContactForm() {
       >
         <form>
           <FormControl>
-            <FormGroup
-              row
-              sx={{
-                padding: 2,
-                justifyContent: "space-between",
-              }}
-            >
+            <StyledFormGroup row paddingtop={10}>
               <BeautifulTextField
                 value={formValues.name}
                 onChange={handleTextFieldChange}
@@ -174,14 +168,8 @@ export default function ContactForm() {
                 value={formValues.role ?? ""}
                 onInputChange={handleAutoCompleteChange}
               />
-            </FormGroup>
-            <FormGroup
-              row
-              sx={{
-                padding: 2,
-                justifyContent: "space-between",
-              }}
-            >
+            </StyledFormGroup>
+            <StyledFormGroup row>
               <SkillSelect
                 value={formValues.skills || ""}
                 onChange={handleSelectChange}
@@ -199,14 +187,8 @@ export default function ContactForm() {
                 value={dayjs(formValues.startDate)}
                 onChange={handleDatePickerChange}
               />
-            </FormGroup>
-            <FormGroup
-              row
-              sx={{
-                padding: 2,
-                justifyContent: "space-between",
-              }}
-            >
+            </StyledFormGroup>
+            <StyledFormGroup row>
               <PreferenceRadios
                 preference={formValues.preference}
                 handleRadioChange={handleRadioChange}
@@ -215,7 +197,7 @@ export default function ContactForm() {
                 <Button onClick={handleSubmitClick}>Submit</Button>
                 <Button onClick={handleClearClick}>Clear</Button>
               </Stack>
-            </FormGroup>
+            </StyledFormGroup>
           </FormControl>
         </form>
       </Paper>
