@@ -4,7 +4,6 @@ import {
   Button,
   Checkbox,
   Dialog,
-  FormControl,
   ListItemText,
   MenuItem,
   Paper,
@@ -159,59 +158,61 @@ export default function ContactForm() {
         }}
       >
         <form>
-          <FormControl>
-            <StyledFormGroup row paddingtop={10}>
-              <BeautifulTextField
-                value={formValues.name}
-                onChange={handleTextFieldChange}
-              />
-              <RolesAutoComplete
-                value={formValues.role ?? ""}
-                onInputChange={handleAutoCompleteChange}
-              />
-            </StyledFormGroup>
-            <StyledFormGroup row>
-              <SkillSelect
-                value={formValues.skills || ""}
-                onChange={handleSelectChange}
+          <StyledFormGroup row paddingtop={10}>
+            <BeautifulTextField
+              value={formValues.name}
+              onChange={handleTextFieldChange}
+            />
+            <RolesAutoComplete
+              value={formValues.role ?? ""}
+              onInputChange={handleAutoCompleteChange}
+            />
+          </StyledFormGroup>
+          <StyledFormGroup row>
+            <SkillSelect
+              value={formValues.skills || ""}
+              onChange={handleSelectChange}
+            >
+              {SKILLS.map((skill) => {
+                return (
+                  <MenuItem value={skill} key={skill}>
+                    <Checkbox checked={formValues.skills?.includes(skill)} />
+                    <ListItemText primary={skill} />
+                  </MenuItem>
+                );
+              })}
+            </SkillSelect>
+            <BeautifulDesktopDatePicker
+              value={dayjs(formValues.startDate)}
+              onChange={handleDatePickerChange}
+            />
+          </StyledFormGroup>
+          <StyledFormGroup row>
+            <PreferenceRadios
+              preference={formValues.preference}
+              handleRadioChange={handleRadioChange}
+            />
+            <Stack
+              justifyContent="space-around"
+              alignItems="center"
+              sx={{ minWidth: MIN_WIDTH }}
+            >
+              <Button
+                variant="contained"
+                sx={{ height: 56, width: 100 }}
+                onClick={handleSubmitClick}
               >
-                {SKILLS.map((skill) => {
-                  return (
-                    <MenuItem value={skill} key={skill}>
-                      <Checkbox checked={formValues.skills?.includes(skill)} />
-                      <ListItemText primary={skill} />
-                    </MenuItem>
-                  );
-                })}
-              </SkillSelect>
-              <BeautifulDesktopDatePicker
-                value={dayjs(formValues.startDate)}
-                onChange={handleDatePickerChange}
-              />
-            </StyledFormGroup>
-            <StyledFormGroup row>
-              <PreferenceRadios
-                preference={formValues.preference}
-                handleRadioChange={handleRadioChange}
-              />
-              <Stack>
-                <Button
-                  variant="contained"
-                  sx={{ height: 56, width: 100 }}
-                  onClick={handleSubmitClick}
-                >
-                  Submit
-                </Button>
-                <Button
-                  variant="beautiful"
-                  sx={{ height: 56, width: 100 }}
-                  onClick={handleClearClick}
-                >
-                  Clear
-                </Button>
-              </Stack>
-            </StyledFormGroup>
-          </FormControl>
+                Submit
+              </Button>
+              <Button
+                variant="beautiful"
+                sx={{ height: 56, width: 100 }}
+                onClick={handleClearClick}
+              >
+                Clear
+              </Button>
+            </Stack>
+          </StyledFormGroup>
         </form>
       </Paper>
       <Dialog open={alertOpen} onClose={handleAlertClick}>

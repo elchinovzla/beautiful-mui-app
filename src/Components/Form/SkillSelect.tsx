@@ -25,7 +25,11 @@ const SkillSelect = (props: {
       {...props}
       id="skill-select"
       renderValue={(select: string[]) => select.join(", ")}
-      sx={{ minWidth: MIN_WIDTH, marginRight: 2 }}
+      sx={{
+        minWidth: MIN_WIDTH,
+        marginRight: 2,
+        marginBottom: { xs: 2, md: 0 },
+      }}
       multiple
       MenuProps={{
         PaperProps: {
